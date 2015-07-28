@@ -1,0 +1,57 @@
+// JSP Finder App
+
+var express = require('express');
+var app = express();
+var mongojs = require('mongojs');
+var db = mongojs('urlList', ['urlList']);
+var bodyParser = require('body-parser');
+
+app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.json());
+
+app.get('/urlList', function (req, res) {
+    console.log('I received a GET request');
+
+    db.urlList.find(function (err, docs) {
+        console.log(docs);
+        res.json(docs);
+    });
+});
+
+app.post('/urlList', function (req, res) {
+    console.log(req.body);
+    db.urlList.insert(req.body, function(err, doc) {
+        res.json(doc);
+    });
+});
+
+app.delete('/urlList/:id', function (req, res) {
+    var id = req.params.id;
+    console.log(id);
+    db.urlList.remove({_id: mongojs.ObjectId(id)}, function (err, doc) {
+        res.json(doc);
+    });
+});
+
+app.get('/urlList/:id', function (req, res) {
+    var id = req.params.id;
+    console.log(id);
+    db.urlList.findOne({_id: mongojs.ObjectId(id)}, function (err, doc) {
+        res.json(doc);
+    });
+});
+
+app.put('/urlList/:id', function (req, res) {
+    var id = req.params.id;
+    console.log(req.body.url);
+    db.urlList.findAndModify({
+            query: {_id: mongojs.ObjectId(id)},
+            update: {$set: {url: req.body.url, jsp: req.body.jsp, route: req.body.route}},
+            new: true}, function (err, doc) {
+            res.json(doc);
+        }
+    );
+});
+
+app.listen(27017);
+console.log("Server running on port 27017");
