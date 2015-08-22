@@ -46,7 +46,7 @@ app.put('/urlList/:id', function (req, res) {
     console.log(req.body.url);
     db.urlList.findAndModify({
             query: {_id: mongojs.ObjectId(id)},
-            update: {$set: {url: req.body.url, jsp: req.body.jsp, route: req.body.route}},
+            update: {$set: {url: req.body.url, page: req.body.page, jsp: req.body.jsp, routes: req.body.routes}},
             new: true}, function (err, doc) {
             res.json(doc);
         }
