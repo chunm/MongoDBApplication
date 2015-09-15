@@ -1,0 +1,194 @@
+<!DOCTYPE>
+<html ng-app="myApp">
+<head>
+    <!-- Animations css for search -->
+    <link href="animations.css" rel="stylesheet" type="text/css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <!-- Optional styling -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link href="myStyles.css" rel="stylesheet" type="text/css">
+    <!-- Angular JS for search -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js"></script>
+    <!-- JS for Modals -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
+
+    <title>JSP Finder App</title>
+</head>
+<body>
+<div class="container" ng-controller="AppCtrl">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <a class="navbar-brand" href="#">JSP Finder App</a>
+
+            <!-- Trigger the modal with a button -->
+            <button type="button" class="btn btn-info btn-lg" id="entryButton" data-toggle="modal" data-target="#addModal">Add Entry</button>
+
+            <!-- Search Bar -->
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <input id="search" type="search" ng-model="terms" placeholder="Search..." aria-label="filter jsps">
+                    </div> <!-- /input-group -->
+                </div> <!-- /.col-lg-6 -->
+            </div> <!-- /.row -->
+        </div>
+    </nav> <!-- /navbar -->
+
+    <!-- Modals -->
+    <div class="container">
+        <!-- Add Entry Modal -->
+        <div class="modal fade" id="addModal" style="top:300px;" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add Entry</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table>
+                            <tbody>
+                            <form>
+                                    <tr>URL:<input class="form-control" ng-model="entry.url"></tr>
+                                    <tr>Page:<input class="form-control" ng-model="entry.page"></tr>
+                                    <tr>
+                                        <fieldset data-ng-repeat="jsp in jsps">
+                                            Includes:
+                                            <div class="input-group">
+                                                <input class="form-control" ng-model="jsp.value" placeholder="Enter JSP">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button" ng-click="addNewJSP()">+</button>
+                                                <button class="btn btn-default" type="button" ng-show="$last" ng-click="removeJSP()">-</button>
+                                            </span>
+                                            </div> <!-- /input-group -->
+                                        </fieldset>
+                                    </tr>
+                                    <tr>
+                                        Complexity:
+                                        <select ng-model="entry.complexity" class="form-control" style="width: 100%;">
+                                            <option value="">--Select--</option>
+                                            <option selected>Level 1</option>
+                                            <option>Level 2</option>
+                                            <option>Level 3</option>
+                                        </select>
+                                        Status:
+                                        <select ng-model="entry.stat" class="form-control" style="width:100%;">
+                                            <option value="">--Select--</option>
+                                            <option value="0-Done">0-Done</option>
+                                            <option value="1-Minor Changes">1-Minor Changes</option>
+                                            <option value="2-Minor JavaScript Changes">2-Minor JavaScript Changes</option>
+                                            <option value="3-Rewrite">3-Rewrite</option>
+                                        </select>
+                                    </tr>
+                                    <tr>Route:<textarea class="form-control" ng-model="entry.routes"></textarea></tr>
+                                    <tr>Notes:<textarea class="form-control" ng-model="entry.notes"></textarea></tr>
+                                </form> <!-- /formcontrols -->
+                            </tbody>
+                        </table>
+                    </div> <!-- /modal-body -->
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="addButton" ng-click="addEntry(); resetJSP();">Add Entry</button>
+                        <button class="btn btn-info" id="clearButton" ng-click="resetJSP();">Clear</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div> <!-- /modal-footer -->
+                </div> <!-- /modal-content -->
+            </div> <!-- /modal-dialog modal-lg -->
+        </div> <!-- /addModal -->
+
+        <!-- Edit Entry Modal -->
+        <div class="modal fade" id="editModal" style="top:300px;" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Edit Entry</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table>
+                            <tbody>
+                            <form>
+                                <tr>URL:<input class="form-control" ng-model="entry.url"></tr>
+                                <tr>Page:<input class="form-control" ng-model="entry.page"></tr>
+                                <tr>
+                                    <fieldset data-ng-repeat="jsp in jsps">
+                                        Includes:
+                                        <div class="input-group">
+                                            <input class="form-control" ng-model="jsp.value" placeholder="Enter JSP">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button" ng-click="addNewJSP()">+</button>
+                                                <button class="btn btn-default" type="button" ng-show="$last" ng-click="removeJSP()">-</button>
+                                            </span>
+                                        </div> <!-- /input-group -->
+                                    </fieldset>
+                                </tr>
+                                <tr>
+                                    Complexity:
+                                    <select ng-model="entry.complexity" class="form-control" style="width: 100%;">
+                                        <option value="">--Select--</option>
+                                        <option selected>Level 1</option>
+                                        <option>Level 2</option>
+                                        <option>Level 3</option>
+                                    </select>
+                                    Status:
+                                    <select ng-model="entry.stat" class="form-control" style="width: 100%;">
+                                        <option value="">--Select--</option>
+                                        <option value="0-Done">0-Done</option>
+                                        <option value="1-Minor Changes">1-Minor Changes</option>
+                                        <option value="2-Minor JavaScript Changes">2-Minor JavaScript Changes</option>
+                                        <option value="3-Rewrite">3-Rewrite</option>
+                                    </select>
+                                </tr>
+                                <tr>Route:<textarea class="form-control" ng-model="entry.routes"></textarea></tr>
+                                <tr>Notes:<textarea class="form-control" ng-model="entry.notes"></textarea></tr>
+                            </form> <!-- /formcontrols -->
+                            </tbody>
+                        </table>
+                    </div> <!-- /modal-body -->
+                    <div class="modal-footer">
+                        <button class="btn btn-info" id="updateButton" ng-click="update(); resetJSP();">Update</button>
+                        <button type="button" class="btn btn-default" ng-click="resetJSP();" data-dismiss="modal">Close</button>
+                    </div> <!-- /modal-footer -->
+                </div> <!-- /modal-content -->
+            </div> <!-- /modal-dialog modal-lg -->
+        </div> <!-- /editModal -->
+    </div> <!-- Modals -->
+
+    <!-- Table Content -->
+    <table class="table" id="table">
+        <thead>
+            <tr>
+                <th>URL</th>
+                <th>Page</th>
+                <th>Includes</th>
+                <th>Status</th>
+                <th>Complexity</th>
+                <th>Route</th>
+                <th>Notes</th>
+                <th>Action</th>
+            </tr>
+        </thead> <!-- /tablehead -->
+        <tbody>
+            <tr ng-repeat="entry in urlList | filter:terms as results">
+                <td>{{entry.url}}</td>
+                <td>{{entry.page}}</td>
+                <td ng-bind-html="splitIncludes(entry.jsp)|trustAsHTML"></td>
+                <td>{{entry.stat}}</td>
+                <td>{{entry.complexity}}</td>
+                <td>{{entry.routes}}</td>
+                <td>{{entry.notes}}</td>
+                <td><button class="btn btn-danger" ng-click="remove(entry._id)">Remove</button></td>
+                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal" ng-click="edit(entry._id)">Edit</button></td>
+            </tr> <!-- /content -->
+        </tbody> <!-- /tablebody -->
+    </table> <!-- /.table -->
+
+</div> <!-- /container -->
+<script src="controllers/controller.js"></script>
+</body>
+</html>

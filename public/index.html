@@ -3,11 +3,11 @@
 <head>
     <!-- Animations css for search -->
     <link href="animations.css" rel="stylesheet" type="text/css">
-    <link href="myStyles.css" rel="stylesheet" type="text/css">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <!-- Optional theme -->
+    <!-- Optional styling -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link href="myStyles.css" rel="stylesheet" type="text/css">
     <!-- Angular JS for search -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js"></script>
@@ -15,16 +15,19 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
+    <!-- JS for Pagination -->
+    <script src="dirPagination.js"></script>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
+
     <title>JSP Finder App</title>
 </head>
 <body>
-<div class="container" ng-controller="AppCtrl">
-
+<div class="container" ng-controller="AppCtrl as jspListCtrl">
 
     <!-- Navbar -->
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">...</button>
             <a class="navbar-brand" href="#">JSP Finder App</a>
 
             <!-- Trigger the modal with a button -->
@@ -34,12 +37,12 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="input-group">
-                        <input id="search" type="search" ng-model="terms" placeholder="Search..." aria-label="filter jsps">
-                    </div><!-- /input-group -->
-                </div><!-- /.col-lg-6 -->
-            </div><!-- /.row -->
+                        <input id="search" type="search" ng-model="jspListCtrl.terms" placeholder="Search..." aria-label="filter jsps">
+                    </div> <!-- /input-group -->
+                </div> <!-- /.col-lg-6 -->
+            </div> <!-- /.row -->
         </div>
-    </nav><!-- /navbar -->
+    </nav> <!-- /navbar -->
 
     <!-- Modals -->
     <div class="container">
@@ -54,35 +57,52 @@
                     <div class="modal-body">
                         <table>
                             <tbody>
-                                <form>
-                                    <tr>URL<input class="form-control" ng-model="entry.url"></tr>
-                                    <tr>Page<input class="form-control" ng-model="entry.page"></tr>
+                            <form>
+                                    <tr>URL:<input class="form-control" ng-model="jspListCtrl.entry.url"></tr>
+                                    <tr>Page:<input class="form-control" ng-model="jspListCtrl.entry.page"></tr>
                                     <tr>
-                                        <fieldset data-ng-repeat="jsp in jsps">
+                                        <fieldset data-ng-repeat="jsp in jspListCtrl.jsps">
                                             Includes:
                                             <div class="input-group">
                                                 <input class="form-control" ng-model="jsp.value" placeholder="Enter JSP">
                                             <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button" ng-click="addNewJSP()">+</button>
-                                                <button class="btn btn-default" type="button" ng-show="$last" ng-click="removeJSP()">-</button>
+                                                <button class="btn btn-default" type="button" ng-click="jspListCtrl.addNewJSP()">+</button>
+                                                <button class="btn btn-default" type="button" ng-show="$last" ng-click="jspListCtrl.removeJSP()">-</button>
                                             </span>
-                                            </div><!-- /input-group -->
+                                            </div> <!-- /input-group -->
                                         </fieldset>
                                     </tr>
-                                    <tr>Route<textarea class="form-control" ng-model="entry.routes"></textarea></tr>
-                                    <!-- /formcontrols -->
-                                </form>
+                                    <tr>
+                                        Complexity:
+                                        <select ng-model="jspListCtrl.entry.complexity" class="form-control" style="width: 100%;">
+                                            <option value="">--Select--</option>
+                                            <option selected>Level 1</option>
+                                            <option>Level 2</option>
+                                            <option>Level 3</option>
+                                        </select>
+                                        Status:
+                                        <select ng-model="jspListCtrl.entry.stat" class="form-control" style="width:100%;">
+                                            <option value="">--Select--</option>
+                                            <option value="0-Done">0-Done</option>
+                                            <option value="1-Minor Changes">1-Minor Changes</option>
+                                            <option value="2-Minor JavaScript Changes">2-Minor JavaScript Changes</option>
+                                            <option value="3-Rewrite">3-Rewrite</option>
+                                        </select>
+                                    </tr>
+                                    <tr>Route:<textarea class="form-control" ng-model="jspListCtrl.entry.routes"></textarea></tr>
+                                    <tr>Notes:<textarea class="form-control" ng-model="jspListCtrl.entry.notes"></textarea></tr>
+                                </form> <!-- /formcontrols -->
                             </tbody>
                         </table>
-                    </div>
+                    </div> <!-- /modal-body -->
                     <div class="modal-footer">
-                        <button class="btn btn-primary" id="addButton" ng-click="addEntry(); resetJSP();">Add Entry</button>
-                        <button class="btn btn-info" id="clearButton" ng-click="resetJSP();">Clear</button>
+                        <button class="btn btn-primary" id="addButton" ng-click="jspListCtrl.addEntry(); jspListCtrl.resetJSP();">Add Entry</button>
+                        <button class="btn btn-info" id="clearButton" ng-click="jspListCtrl.resetJSP();">Clear</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </div> <!-- /modal-footer -->
+                </div> <!-- /modal-content -->
+            </div> <!-- /modal-dialog modal-lg -->
+        </div> <!-- /addModal -->
 
         <!-- Edit Entry Modal -->
         <div class="modal fade" id="editModal" style="top:300px;" role="dialog">
@@ -96,72 +116,103 @@
                         <table>
                             <tbody>
                             <form>
-                                <tr>URL<input class="form-control" ng-model="entry.url"></tr>
-                                <tr>Page<input class="form-control" ng-model="entry.page"></tr>
+                                <tr>URL:<input class="form-control" ng-model="jspListCtrl.entry.url"></tr>
+                                <tr>Page:<input class="form-control" ng-model="jspListCtrl.entry.page"></tr>
                                 <tr>
-                                    <fieldset data-ng-repeat="jsp in jsps">
+                                    <fieldset data-ng-repeat="jsp in jspListCtrl.jsps">
                                         Includes:
                                         <div class="input-group">
                                             <input class="form-control" ng-model="jsp.value" placeholder="Enter JSP">
                                             <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button" ng-click="addNewJSP()">+</button>
-                                                <button class="btn btn-default" type="button" ng-show="$last" ng-click="removeJSP()">-</button>
+                                                <button class="btn btn-default" type="button" ng-click="jspListCtrl.addNewJSP()">+</button>
+                                                <button class="btn btn-default" type="button" ng-show="$last" ng-click="jspListCtrl.removeJSP()">-</button>
                                             </span>
-                                        </div><!-- /input-group -->
+                                        </div> <!-- /input-group -->
                                     </fieldset>
                                 </tr>
-                                <tr>Route<textarea class="form-control" ng-model="entry.routes"></textarea></tr>
-                                <!-- /formcontrols -->
-                            </form>
+                                <tr>
+                                    Complexity:
+                                    <select ng-model="jspListCtrl.entry.complexity" class="form-control" style="width: 100%;">
+                                        <option value="">--Select--</option>
+                                        <option selected>Level 1</option>
+                                        <option>Level 2</option>
+                                        <option>Level 3</option>
+                                    </select>
+                                    Status:
+                                    <select ng-model="jspListCtrl.entry.stat" class="form-control" style="width: 100%;">
+                                        <option value="">--Select--</option>
+                                        <option value="0-Done">0-Done</option>
+                                        <option value="1-Minor Changes">1-Minor Changes</option>
+                                        <option value="2-Minor JavaScript Changes">2-Minor JavaScript Changes</option>
+                                        <option value="3-Rewrite">3-Rewrite</option>
+                                    </select>
+                                </tr>
+                                <tr>Route:<textarea class="form-control" ng-model="jspListCtrl.entry.routes"></textarea></tr>
+                                <tr>Notes:<textarea class="form-control" ng-model="jspListCtrl.entry.notes"></textarea></tr>
+                            </form> <!-- /formcontrols -->
                             </tbody>
                         </table>
-                    </div>
+                    </div> <!-- /modal-body -->
                     <div class="modal-footer">
-                        <button class="btn btn-info" id="updateButton" ng-click="update(); resetJSP();">Update</button>
-                        <button type="button" class="btn btn-default" ng-click="resetJSP();" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                        <button class="btn btn-info" id="updateButton" ng-click="jspListCtrl.update(); jspListCtrl.resetJSP();">Update</button>
+                        <button type="button" class="btn btn-default" ng-click="jspListCtrl.resetJSP();" data-dismiss="modal">Close</button>
+                    </div> <!-- /modal-footer -->
+                </div> <!-- /modal-content -->
+            </div> <!-- /modal-dialog modal-lg -->
+        </div> <!-- /editModal -->
+    </div> <!-- Modals -->
 
     <!-- Table Content -->
     <table class="table" id="table">
         <thead>
             <tr>
-                <th>URL</th>
-                <th>Page</th>
+                <th id="url-toggle" ng-click="jspListCtrl.setSort('url')">URL<i class="glyphicon glyphicon-chevron-up"></i></th>
+                <th id="page-toggle" ng-click="jspListCtrl.setSort('page')">Page<i class="glyphicon glyphicon-chevron-up"></i></th>
                 <th>Includes</th>
+                <th id="complexity-toggle" ng-click="jspListCtrl.setSort('-complexity')">Complexity<i class="glyphicon glyphicon-chevron-up"></i></th>
+                <th id="status-toggle" ng-click="jspListCtrl.setSort('-stat')">Status<i class="glyphicon glyphicon-chevron-up"></i></th>
                 <th>Route</th>
+                <th>Notes</th>
                 <th>Action</th>
             </tr>
         </thead> <!-- /tablehead -->
         <tbody>
-            <tr ng-repeat="entry in urlList | filter:terms as results">
+            <tr dir-paginate="entry in jspListCtrl.urlList | orderBy:jspListCtrl.sort | filter:jspListCtrl.terms | itemsPerPage: 25">
                 <td>{{entry.url}}</td>
                 <td>{{entry.page}}</td>
-                <td id={{entry.jsp}}>
-                    <div ng-bind-html="mySplit(entry.jsp,0)|trustAsHTML"></div>
-                    <div ng-bind-html="mySplit(entry.jsp,1)|trustAsHTML"></div>
-                    <div ng-bind-html="mySplit(entry.jsp,2)|trustAsHTML"></div>
-                    <div ng-bind-html="mySplit(entry.jsp,3)|trustAsHTML"></div>
-                    <div ng-bind-html="mySplit(entry.jsp,4)|trustAsHTML"></div>
-                    <div ng-bind-html="mySplit(entry.jsp,5)|trustAsHTML"></div>
-                    <div ng-bind-html="mySplit(entry.jsp,6)|trustAsHTML"></div>
-                    <div ng-bind-html="mySplit(entry.jsp,7)|trustAsHTML"></div>
-                    <div ng-bind-html="mySplit(entry.jsp,8)|trustAsHTML"></div>
-                    <div ng-bind-html="mySplit(entry.jsp,9)|trustAsHTML"></div>
-                    <div ng-bind-html="mySplit(entry.jsp,10)|trustAsHTML"></div>
+                <td>
+                    <div data-ng-repeat="jsp in entry.jsp.split(',')">{{jsp}}</div>
                 </td>
+                <td>{{entry.complexity}}</td>
+                <td>{{entry.stat}}</td>
                 <td>{{entry.routes}}</td>
-                <td><button class="btn btn-danger" ng-click="remove(entry._id)">Remove</button></td>
-                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal" ng-click="edit(entry._id)">Edit</button></td>
+                <td>{{entry.notes}}</td>
+                <td><button class="btn btn-danger" ng-click="jspListCtrl.remove(entry._id)">Remove</button></td>
+                <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal" ng-click="jspListCtrl.edit(entry._id)">Edit</button></td>
             </tr> <!-- /content -->
         </tbody> <!-- /tablebody -->
     </table> <!-- /.table -->
+    <dir-pagination-controls
+            max-size="5"
+            direction-links="true"
+            boundary-links="true" >
+    </dir-pagination-controls>
 
-</div><!-- /container -->
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.12/angular.min.js"></script>
+</div> <!-- /container -->
 <script src="controllers/controller.js"></script>
+<script>
+    $('#url-toggle').click( function(){
+        $(this).find('i').toggleClass('glyphicon glyphicon-chevron-up').toggleClass('glyphicon glyphicon-chevron-down');
+    });
+    $('#page-toggle').click( function(){
+        $(this).find('i').toggleClass('glyphicon glyphicon-chevron-up').toggleClass('glyphicon glyphicon-chevron-down');
+    });$('#complexity-toggle').click( function(){
+        $(this).find('i').toggleClass('glyphicon glyphicon-chevron-up').toggleClass('glyphicon glyphicon-chevron-down');
+    });$('#status-toggle').click( function(){
+        $(this).find('i').toggleClass('glyphicon glyphicon-chevron-up').toggleClass('glyphicon glyphicon-chevron-down');
+    });
+
+
+</script>
 </body>
 </html>
